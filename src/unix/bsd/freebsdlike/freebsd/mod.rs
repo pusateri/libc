@@ -2495,6 +2495,10 @@ pub const IFDR_MSG_SIZE: ::c_int = 64;
 pub const IFDR_REASON_MSG: ::c_int = 1;
 pub const IFDR_REASON_VENDOR: ::c_int = 2;
 
+// sys/net/route.h
+
+pub const RTM_VERSION: ::c_int = 0x5;
+
 // sys/net/if_mib.h
 
 /// non-interface-specific

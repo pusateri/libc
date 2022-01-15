@@ -1001,6 +1001,10 @@ pub const IFF_STATICARP: ::c_int = 0x80000; // static ARP
 pub const IFF_NPOLLING: ::c_int = 0x100000; // interface is in polling mode
 pub const IFF_IDIRECT: ::c_int = 0x200000; // direct input
 
+// sys/net/route.h
+
+pub const RTM_VERSION: ::c_int = 0x7;
+
 //
 // sys/netinet/in.h
 // Protocols (RFC 1700)
