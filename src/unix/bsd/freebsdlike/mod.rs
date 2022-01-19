@@ -1015,6 +1015,16 @@ pub const RTA_IFA: ::c_int = 0x20;
 pub const RTA_AUTHOR: ::c_int = 0x40;
 pub const RTA_BRD: ::c_int = 0x80;
 
+pub const RTAX_DST: ::c_int = 0;
+pub const RTAX_GATEWAY: ::c_int = 1;
+pub const RTAX_NETMASK: ::c_int = 2;
+pub const RTAX_GENMASK: ::c_int = 3;
+pub const RTAX_IFP: ::c_int = 4;
+pub const RTAX_IFA: ::c_int = 5;
+pub const RTAX_AUTHOR: ::c_int = 6;
+pub const RTAX_BRD: ::c_int = 7;
+pub const RTAX_MAX: ::c_int = 8;
+
 pub const LOCAL_PEERCRED: ::c_int = 1;
 
 pub const SHUT_RD: ::c_int = 0;
