@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.10
 
 # This is a workaround to avoid the interaction with tzdata.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,11 +14,11 @@ RUN apt-get install -y --no-install-recommends \
     libc6-dev \
     libxml2 \
     python3 \
-    python3-distutils \
-    xz-utils
+    xz-utils \
+    bzip2
 
 COPY emscripten.sh /
-RUN bash /emscripten.sh
+RUN /emscripten.sh
 
 ENV PATH=$PATH:/rust/bin \
     CARGO_TARGET_ASMJS_UNKNOWN_EMSCRIPTEN_RUNNER=node

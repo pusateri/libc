@@ -1,13 +1,12 @@
 //! Compare libc's CMSG(3) family of functions against the actual C macros, for
 //! various inputs.
 
-extern crate libc;
-
 #[cfg(unix)]
 mod t {
 
-    use libc::{self, c_uchar, c_uint, c_void, cmsghdr, msghdr};
     use std::mem;
+
+    use libc::{self, c_uchar, c_uint, c_void, cmsghdr, msghdr};
 
     extern "C" {
         pub fn cmsg_firsthdr(msgh: *const msghdr) -> *mut cmsghdr;
@@ -57,29 +56,30 @@ mod t {
     #[test]
     fn test_cmsg_nxthdr() {
         use std::ptr;
+        // Helps to align the buffer on the stack.
+        #[repr(align(8))]
+        struct Align8<T>(T);
 
-        let mut buffer = [0u8; 256];
+        const CAPACITY: usize = 512;
+        let mut buffer = Align8([0_u8; CAPACITY]);
         let mut mhdr: msghdr = unsafe { mem::zeroed() };
-        let pmhdr = &mhdr as *const msghdr;
         for start_ofs in 0..64 {
-            let pcmsghdr = &mut buffer[start_ofs] as *mut u8 as *mut cmsghdr;
+            let pcmsghdr = buffer.0.as_mut_ptr().cast::<cmsghdr>();
             mhdr.msg_control = pcmsghdr as *mut c_void;
             mhdr.msg_controllen = (160 - start_ofs) as _;
             for cmsg_len in 0..64 {
                 for next_cmsg_len in 0..32 {
-                    for i in buffer[start_ofs..].iter_mut() {
-                        *i = 0;
-                    }
                     unsafe {
+                        pcmsghdr.cast::<u8>().write_bytes(0, CAPACITY);
                         (*pcmsghdr).cmsg_len = cmsg_len;
-                        let libc_next = libc::CMSG_NXTHDR(pmhdr, pcmsghdr);
-                        let next = cmsg_nxthdr(pmhdr, pcmsghdr);
+                        let libc_next = libc::CMSG_NXTHDR(&mhdr, pcmsghdr);
+                        let next = cmsg_nxthdr(&mhdr, pcmsghdr);
                         assert_eq!(libc_next, next);
 
                         if libc_next != ptr::null_mut() {
                             (*libc_next).cmsg_len = next_cmsg_len;
-                            let libc_next = libc::CMSG_NXTHDR(pmhdr, pcmsghdr);
-                            let next = cmsg_nxthdr(pmhdr, pcmsghdr);
+                            let libc_next = libc::CMSG_NXTHDR(&mhdr, pcmsghdr);
+                            let next = cmsg_nxthdr(&mhdr, pcmsghdr);
                             assert_eq!(libc_next, next);
                         }
                     }

@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.10
 
 RUN dpkg --add-architecture i386
 RUN apt-get update
@@ -8,7 +8,6 @@ RUN apt-get install -y --no-install-recommends \
   wget \
   ca-certificates \
   python3 \
-  python3-distutils \
   unzip \
   expect \
   openjdk-8-jre \
@@ -19,10 +18,10 @@ WORKDIR /android/
 COPY android* /android/
 
 ENV ANDROID_ARCH=aarch64
-ENV PATH=$PATH:/android/ndk-$ANDROID_ARCH/bin:/android/sdk/cmdline-tools/tools:/android/sdk/platform-tools
+ENV PATH=$PATH:/android/linux-x86_64/bin:/android/sdk/cmdline-tools/tools:/android/sdk/platform-tools
 
-RUN sh /android/android-install-ndk.sh $ANDROID_ARCH
-RUN sh /android/android-install-sdk.sh $ANDROID_ARCH
+RUN /android/android-install-ndk.sh
+RUN /android/android-install-sdk.sh $ANDROID_ARCH
 RUN mv /root/.android /tmp
 RUN chmod 777 -R /tmp/.android
 RUN chmod 755 /android/sdk/cmdline-tools/tools/* /android/sdk/emulator/qemu/linux-x86_64/*
@@ -31,6 +30,7 @@ ENV PATH=$PATH:/rust/bin \
     CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=aarch64-linux-android28-clang \
     CARGO_TARGET_AARCH64_LINUX_ANDROID_RUNNER=/tmp/runtest \
     CC_aarch64_linux_android=aarch64-linux-android28-clang \
+    AR_aarch64_linux_android=llvm-ar \
     HOME=/tmp
 
 ADD runtest-android.rs /tmp/runtest.rs

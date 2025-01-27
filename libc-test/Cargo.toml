@@ -1,30 +1,36 @@
 [package]
 name = "libc-test"
-version = "0.2.112"
+version = "0.1.0"
+edition = "2021"
 authors = ["The Rust Project Developers"]
 license = "MIT OR Apache-2.0"
 build = "build.rs"
+publish = false
 repository = "https://github.com/rust-lang/libc"
 homepage = "https://github.com/rust-lang/libc"
 description = """
 A test crate for the libc crate.
 """
 
-[dependencies.libc]
-path = ".."
-version = "0.2.112"
-default-features = false
+[dependencies]
+libc = { path = "..", version = "1.0.0-alpha.1", default-features = false }
+
+[dev-dependencies]
+syn = { version = "2.0.91", features = ["full", "visit"] }
+proc-macro2 = { version = "1.0.92", features = ["span-locations"] }
+glob = "0.3.2"
+annotate-snippets = { version = "0.11.5", features = ["testing-colors"] }
 
 [build-dependencies]
-cc = "1.0.61"
+cc = "1.0.83"
 # FIXME: Use fork ctest until the maintainer gets back.
 ctest2 = "0.4.3"
+regex = "1.11.1"
 
 [features]
-default = [ "std" ]
-std = [ "libc/std" ]
-align = [ "libc/align" ]
-extra_traits = [ "libc/extra_traits" ]
+default = ["std"]
+std = ["libc/std"]
+extra_traits = ["libc/extra_traits"]
 
 [[test]]
 name = "main"
@@ -67,6 +73,11 @@ path = "test/cmsg.rs"
 harness = true
 
 [[test]]
+name = "makedev"
+path = "test/makedev.rs"
+harness = true
+
+[[test]]
 name = "errqueue"
 path = "test/errqueue.rs"
 harness = true
@@ -80,3 +91,18 @@ harness = true
 name = "semver"
 path = "test/semver.rs"
 harness = false
+
+[[test]]
+name = "primitive_types"
+path = "test/primitive_types.rs"
+harness = true
+
+[[test]]
+name = "style"
+path = "test/check_style.rs"
+harness = true
+
+[[test]]
+name = "style_tests"
+path = "test/style_tests.rs"
+harness = true
